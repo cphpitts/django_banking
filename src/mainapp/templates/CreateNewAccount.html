@@ -1,0 +1,21 @@
+{% extends 'checkbook_base.html' %}
+{% block title %}Create New Account{% endblock %}
+{% block content %}
+	<h3>CREATE NEW ACCOUNT</h3>
+	<div id="account-form">
+		<form name="accountForm" method="POST" action="{% url 'addAccount' %}">
+			<div class="frmObject_container">
+				{% csrf_token %}
+				{{ form.non_field_errors }}
+				{{ form.as_p }}
+				<div class=frmBtn_container">
+					<input type="submit" class="btn"  value="Create New Account" name="Save_Account">
+					<a href="{% url 'home' %}"><button type="button" class="btn" value="Cancel"></button> </a>
+
+				</div>
+
+			</div>
+		</form>
+		<br>
+	</div>
+{% endblock %}
