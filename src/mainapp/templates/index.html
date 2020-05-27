@@ -10,7 +10,7 @@
             <label for="accounts">Choose Account:</label>
             <select name="accounts" id=""accounts">
             {% for account in accounts %}
-                <option value="../{{account.pk }}/balance">{{ account.account_Num }}</option>
+                <option value="../{{account.pk }}/balance">{{ account.name_first }} {{ account.name_last }}</option>
             {% endfor %}
             </select>
             <!-- Need to add a method to the onclick so the button works-->

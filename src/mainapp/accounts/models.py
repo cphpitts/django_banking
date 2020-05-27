@@ -10,7 +10,7 @@ class Account(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return self.account_Num
+        return "{} {}".format(self.name_first, self.name_last)
 
 TRANSACTION_TYPES = {
     ('debit', 'Debit'),
@@ -25,7 +25,8 @@ class Transaction(models.Model):
     type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
     description = models.CharField(max_length=100, default="", blank=True, null=False)
     amount = models.DecimalField(max_digits=100000, decimal_places=2, default="", blank=True, null=False)
-    account = models.ForeignKey('Account', related_name='transaction', on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, related_name='transaction', on_delete=models.CASCADE)
+    current_balance = models.DecimalField(max_digits=100000, decimal_places=2, default=0.00, blank=True, null=False)
 
     objects = models.Manager()
 

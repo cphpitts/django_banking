@@ -7,10 +7,10 @@
 			<div id="all-transactions-form">
 				<form> <!-- Use value to add the Django populated details-->
 					<br>
-					<label>Account Holder:</label><input id="accountholder" type="text" name="accountHolder" value="{{ account.name_first }} {{ account.name_last }}" readonly><br><br>
-					<label>Current Balance:</label><input id="balance" type="text" name="currentBalance" value="${{ account.balance | intcomma}}" readonly>
+					<label>Account Holder:</label><input id="accountholder" type="text" name="accountHolder" value="{{ accountInfo.name_first }} {{ accountInfo.name_last }}" readonly><br><br>
+					<label>Current Balance:</label><input id="balance" type="text" name="currentBalance" value="${{ accountInfo.balance | intcomma}}" readonly>
 					<!-- Add link to href to make this button work -->
-					<button type="button"><a href="">Add Transaction+</a></button>
+					<button type="button"><a href="{% url 'newTransaction' %}" class="dropdown-item">Add Transaction+</a></button>
 				</form>
 				<br><br>
 			</div>
@@ -26,13 +26,13 @@
 				</tr>
 
 				{% for entry in account %}
-					{% for transaction in Account.transaction.all %}
+					{% for item in entry.transaction.all %}
 				<tr>
-					<td class="center"> {{ transaction.date }} </td>
-					<td class="center">{{ transaction.type }}</td>
-					<td class="left">{{ transaction.description }}</td>
-					<td class="right">{{ transaction.amount }}</td>
-					<td class="right">$10,654.78</td>
+					<td class="center"> {{ item.date | date:'m-d-Y' }} </td>
+					<td class="center">{{ item.type }}</td>
+					<td class="left">{{ item.description }}</td>
+					<td class="right">${{ item.amount | intcomma }}</td>
+					<td class="right">${{ item.current_balance | intcomma }}</td>
 				</tr>
 
 				{% endfor %}

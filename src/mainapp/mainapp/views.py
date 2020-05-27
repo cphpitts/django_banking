@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from accounts.forms import AccountForm
+from accounts.forms import AccountForm, TransactionForm
 from accounts.models import Account, Transaction
+import logging
 
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 def home(request):
@@ -11,20 +13,11 @@ def home(request):
 
 def balanceSheet(request, pk):
     pk = int(pk)
-    account = get_object_or_404(Account, pk=pk)
-    transactions = Transaction.objects.filter(account_id=pk)
-    # accountTransactions = Account.objects.filter(pk=pk)
-    # # transactions = get_object_or_404(Transaction, account=pk)
-    # for entry in accountTransactions:
-    #     transactions = entry.transaction.all()
-    #
-    # def get_queryset(self):
-    #     pk = self.kwargs['pk']
-    #     return Transaction.objects.filter(account=pk)
+    account_info = get_object_or_404(Account, pk=pk)
+    account = Account.objects.filter(pk=pk)
+    transactions = Transaction.objects.filter(account__account_Num=account)
 
-
-
-    return render(request, "BalanceSheet.html", {'account': account, 'transactions':transactions})
+    return render(request, "BalanceSheet.html", {'account': account, 'transactions':transactions, 'accountInfo': account_info})
 
 def addAccount(request):
     form = AccountForm(request.POST or None)
@@ -39,9 +32,25 @@ def addAccount(request):
         }
     return render(request, 'CreateNewAccount.html', context)
 
-
-    return render(request, "CreateNewAccount.html", {'accounts': accounts})
-
 def newTransaction(request):
-    accounts = Account.objects.all()
-    return render(request, "AddTransaction.html", {'accounts': accounts})
+    form = TransactionForm(request.POST or None)
+    if form.is_valid():
+        newForm = form.save(commit=False)
+        logger.error(newForm.account)
+        account = Account.objects.get(account_Num = newForm.account.account_Num)
+
+        account.balance = int(account.balance - form.cleaned_data['amount'])
+        newForm.current_balance = account.balance
+
+
+        newForm.save()
+
+        account.save()
+        return redirect('home')
+    else:
+        print(form.errors)
+        form = TransactionForm()
+        context = {
+            'form': form
+        }
+    return render(request, 'AddTransaction.html', context)
